@@ -4,11 +4,12 @@ import type { StockItem, ProcessedStockData } from "@/types/api"
 const getItemColor = (name: string, category: string): string => {
   const colorMap: Record<string, string> = {
     // Seeds
-    "Blueberry": "bg-blue-500",
     "Carrot": "bg-orange-500",
-    "Green Apple": "bg-green-500",
     "Strawberry": "bg-red-500",
+    "Blueberry": "bg-blue-500",
+    "Orange Tulip": "bg-yellow-500",
     "Tomato": "bg-red-600",
+    "Corn": "bg-yellow-500",
 
     // Gears
     "Cleaning Spray": "bg-blue-500",
