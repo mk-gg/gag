@@ -229,8 +229,8 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
                           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                             <motion.span
                               key={item.count}
-                              initial={{ scale: 1.2, color: "#10b981" }}
-                              animate={{ scale: 1, color: "inherit" }}
+                              initial={{ scale: 1.2 }}
+                              animate={{ scale: 1 }}
                               transition={{ duration: 0.3 }}
                               className="text-xs font-bold"
                             >
@@ -275,8 +275,8 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
                           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                             <motion.span
                               key={item.count}
-                              initial={{ scale: 1.2, color: "#10b981" }}
-                              animate={{ scale: 1, color: "inherit" }}
+                              initial={{ scale: 1.2 }}
+                              animate={{ scale: 1 }}
                               transition={{ duration: 0.3 }}
                               className="text-xs font-bold"
                             >

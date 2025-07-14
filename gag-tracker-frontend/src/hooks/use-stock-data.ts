@@ -18,36 +18,29 @@ const getUserTimezone = (): string => {
 const getAccurateTime = async (): Promise<Date> => {
   const userTimezone = getUserTimezone()
   
-  const timeApis = [
-    {
-      // Google's Time API alternative that respects timezone
-      url: `https://timeapi.io/api/Time/current/zone?timeZone=${encodeURIComponent(userTimezone)}`,
-      parser: (data: any) => new Date(data.dateTime)
-    },
-    {
-      // Timezone-aware API
-      url: `https://worldtimeapi.org/api/timezone/${encodeURIComponent(userTimezone)}`,
-      parser: (data: any) => new Date(data.datetime)
-    }
-  ]
-
-  // Try each API in sequence
-  for (const api of timeApis) {
-    try {
-      const response = await fetch(api.url)
-      if (!response.ok) continue
-      const data = await response.json()
-      return api.parser(data)
-    } catch (error) {
-      console.warn(`Failed to get time from ${api.url}:`, error)
-      continue
-    }
-  }
-
-  // If APIs fail, use local time but ensure it's timezone-aware
-  console.warn("All time APIs failed, using local time with timezone adjustment")
+  // Since external time APIs are having CORS issues, we'll use a more robust local time approach
   const localTime = new Date()
-  return new Date(localTime.toLocaleString("en-US", { timeZone: userTimezone }))
+  
+  try {
+    // Create a formatter for the user's timezone
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: userTimezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    })
+    
+    // Format the time and parse it back to ensure timezone correctness
+    const formattedTime = formatter.format(localTime)
+    return new Date(formattedTime)
+  } catch (error) {
+    console.warn("Error formatting time with timezone, using direct local time:", error)
+    return localTime
+  }
 }
 
 // Calculate next check time (every 5 minutes + 10 seconds)
@@ -72,6 +65,25 @@ const getNextCheckTime = (currentTime: Date): Date => {
   return nextTime
 }
 
+// Notification state interface
+interface NotificationState {
+  lastNotified: Record<string, {
+    quantity: string
+    timestamp: number
+  }>
+  cooldown: number
+}
+
+interface StockItem {
+  name: string
+  count: string
+  color?: string
+}
+
+interface CategoryData {
+  [key: string]: StockItem[]
+}
+
 export const useStockData = () => {
   const [data, setData] = useState<ProcessedStockData | null>(null)
   const [previousData, setPreviousData] = useState<ProcessedStockData | null>(null)
@@ -81,6 +93,81 @@ export const useStockData = () => {
   const [nextUpdate, setNextUpdate] = useState<Date | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Add notification state ref to persist across renders
+  const notificationStateRef = useRef<NotificationState>({
+    lastNotified: {},
+    cooldown: 5 * 60 * 1000 // 5 minutes cooldown
+  })
+
+  // Check if we should notify about an item
+  const shouldNotifyForItem = (itemName: string, quantity: string): boolean => {
+    const now = Date.now()
+    const lastNotification = notificationStateRef.current.lastNotified[itemName]
+    
+    // If never notified before or quantity changed
+    if (!lastNotification || lastNotification.quantity !== quantity) {
+      // If cooldown period has passed or quantity increased
+      if (!lastNotification || 
+          now - lastNotification.timestamp > notificationStateRef.current.cooldown ||
+          parseInt(quantity) > parseInt(lastNotification.quantity)) {
+        
+        // Update notification state
+        notificationStateRef.current.lastNotified[itemName] = {
+          quantity,
+          timestamp: now
+        }
+        return true
+      }
+    }
+    return false
+  }
+
+  // Compare current and previous data for changes
+  const checkForChanges = (currentData: CategoryData, previousData: CategoryData | null) => {
+    if (!previousData) return // Skip if no previous data
+    
+    const changedItems: Array<{ name: string; quantity: string }> = []
+
+    // Helper to check items in a category
+    const compareItems = (category: string) => {
+      const currentItems = currentData[category] || []
+      const prevItems = previousData[category] || []
+      
+      currentItems.forEach((currentItem: StockItem) => {
+        const prevItem = prevItems.find((p: StockItem) => p.name === currentItem.name)
+        
+        // Check if item should trigger notification
+        if (shouldNotifyForItem(currentItem.name, currentItem.count)) {
+          changedItems.push({
+            name: currentItem.name,
+            quantity: currentItem.count
+          })
+        }
+      })
+    }
+
+    // Check all categories
+    Object.keys(currentData).forEach(category => {
+      compareItems(category)
+    })
+
+    // If we have changes, show a single grouped notification
+    if (changedItems.length > 0) {
+      const message = changedItems
+        .map(item => `${item.name}: ${item.quantity}`)
+        .join('\n')
+      
+      // Show notification using the browser's notification API
+      if (Notification.permission === "granted") {
+        new Notification("Stock Update", {
+          body: message,
+          icon: "/favicon.ico", // Make sure you have a favicon
+          tag: "stock-update" // This replaces previous notifications
+        })
+      }
+    }
+  }
 
   const fetchData = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_STOCK_API_URL
@@ -150,6 +237,11 @@ export const useStockData = () => {
       const apiData: StockItem[] = await response.json()
       const processedData = processStockData(apiData)
 
+      // Check for changes before updating state
+      if (data) {
+        checkForChanges(processedData, data)
+      }
+
       // Store previous data before updating
       setPreviousData(data)
       setData(processedData)
@@ -196,6 +288,13 @@ export const useStockData = () => {
       intervalRef.current = setInterval(fetchData, 5 * 60 * 1000)
     }
   }
+
+  // Request notification permission on mount
+  useEffect(() => {
+    if (Notification.permission === "default") {
+      Notification.requestPermission()
+    }
+  }, [])
 
   useEffect(() => {
     // Initial fetch
