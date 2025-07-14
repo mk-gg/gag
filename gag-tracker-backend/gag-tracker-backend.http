@@ -1,0 +1,6 @@
+@gag_tracker_backend_HostAddress = http://localhost:5160
+
+GET {{gag_tracker_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
