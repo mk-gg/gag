@@ -78,28 +78,36 @@ namespace gag_tracker_backend.Controllers
             }
         }
 
-        [HttpPost("group")]
-        public ActionResult<IEnumerable<StockItem>> GroupStockItems([FromBody] List<StockItem> items)
+        [HttpGet("group")]
+        public async Task<ActionResult<IEnumerable<StockItem>>> GetGroupedStock()
         {
             try
             {
-                var groupedItems = items
-                    .GroupBy(item => new { item.Name, item.Category })
-                    .Select(group => new StockItem
-                    {
-                        Name = group.Key.Name,
-                        Category = group.Key.Category,
-                        Quantity = group.Sum(item => item.Quantity),
-                        LastUpdated = DateTime.UtcNow
-                    })
-                    .ToList();
+                // First get all stock items
+                var result = await GetCurrentStock() as ActionResult<IEnumerable<StockItem>>;
+                if (result.Result is OkObjectResult okResult && okResult.Value is IEnumerable<StockItem> items)
+                {
+                    // Then group them
+                    var groupedItems = items
+                        .GroupBy(item => new { item.Name, item.Category })
+                        .Select(group => new StockItem
+                        {
+                            Name = group.Key.Name,
+                            Category = group.Key.Category,
+                            Quantity = group.Sum(item => item.Quantity),
+                            LastUpdated = DateTime.UtcNow
+                        })
+                        .ToList();
 
-                return Ok(groupedItems);
+                    return Ok(groupedItems);
+                }
+
+                return StatusCode(500, "Failed to fetch stock items");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error grouping stock items");
-                return StatusCode(500, "An error occurred while grouping stock items");
+                _logger.LogError(ex, "Error getting grouped stock");
+                return StatusCode(500, "An error occurred while fetching grouped stock data");
             }
         }
     }
