@@ -1,7 +1,7 @@
 import type React from "react"
 import "../styles/globals.css"
 import { Inter } from "next/font/google"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { ThemeProvider } from "../components/theme-provider"
 
 const inter = Inter({ 
@@ -10,6 +10,16 @@ const inter = Inter({
   preload: true,
   adjustFontFallback: true
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' }
+  ]
+}
 
 export const metadata: Metadata = {
   title: "GaG Tracker - Shop Tracker",
@@ -20,11 +30,6 @@ export const metadata: Metadata = {
       sizes: 'any',
       type: 'image/x-icon',
     },
-  ],
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' }
   ]
 }
 
