@@ -11,9 +11,9 @@ builder.Services.AddHttpClient();
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:4200", "http://localhost:3000")
+        builder.WithOrigins("http://localhost:4200", "http://localhost:3000", "https://gag-tracker.netlify.app")
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -31,7 +31,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Apply the CORS policy
-app.UseCors("AllowAngular");
+app.UseCors("AllowAll");
 
 app.MapControllers();
 
