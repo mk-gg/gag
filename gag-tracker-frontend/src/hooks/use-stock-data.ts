@@ -74,15 +74,13 @@ interface NotificationState {
   cooldown: number
 }
 
-interface StockItem {
+interface ProcessedStockItem {
   name: string
   count: string
   color?: string
 }
 
-interface CategoryData {
-  [key: string]: StockItem[]
-}
+type CategoryData = ProcessedStockData
 
 export const useStockData = () => {
   const [data, setData] = useState<ProcessedStockData | null>(null)
@@ -124,18 +122,18 @@ export const useStockData = () => {
   }
 
   // Compare current and previous data for changes
-  const checkForChanges = (currentData: CategoryData, previousData: CategoryData | null) => {
+  const checkForChanges = (currentData: ProcessedStockData, previousData: ProcessedStockData | null) => {
     if (!previousData) return // Skip if no previous data
     
     const changedItems: Array<{ name: string; quantity: string }> = []
 
     // Helper to check items in a category
-    const compareItems = (category: string) => {
+    const compareItems = (category: keyof ProcessedStockData) => {
       const currentItems = currentData[category] || []
       const prevItems = previousData[category] || []
       
-      currentItems.forEach((currentItem: StockItem) => {
-        const prevItem = prevItems.find((p: StockItem) => p.name === currentItem.name)
+      currentItems.forEach((currentItem) => {
+        const prevItem = prevItems.find((p) => p.name === currentItem.name)
         
         // Check if item should trigger notification
         if (shouldNotifyForItem(currentItem.name, currentItem.count)) {
@@ -148,7 +146,7 @@ export const useStockData = () => {
     }
 
     // Check all categories
-    Object.keys(currentData).forEach(category => {
+    (Object.keys(currentData) as Array<keyof ProcessedStockData>).forEach(category => {
       compareItems(category)
     })
 
@@ -162,7 +160,7 @@ export const useStockData = () => {
       if (Notification.permission === "granted") {
         new Notification("Stock Update", {
           body: message,
-          icon: "/favicon.ico", // Make sure you have a favicon
+          icon: "/rosydelight.ico", // Make sure you have a favicon
           tag: "stock-update" // This replaces previous notifications
         })
       }
@@ -235,7 +233,7 @@ export const useStockData = () => {
       }
 
       const apiData: StockItem[] = await response.json()
-      const processedData = processStockData(apiData)
+      const processedData = processStockData(apiData) as ProcessedStockData
 
       // Check for changes before updating state
       if (data) {
