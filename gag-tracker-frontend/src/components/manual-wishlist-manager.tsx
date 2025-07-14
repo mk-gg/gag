@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Search, Plus, Trash2 } from "lucide-react"
-import { searchItems, addCustomItem, removeCustomItem, type GameItem } from "@/utils/item-database"
+import { searchItems, addCustomItem, removeCustomItem} from "@/utils/item-database"
+import type { GameItem } from "@/types/item-database"
 import { useWishlist } from "@/hooks/use-wishlist"
 
 interface ManualWishlistManagerProps {
