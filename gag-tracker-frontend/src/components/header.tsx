@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { ChevronRight, Menu, X, Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
+import Image from "next/image"
 
 interface HeaderProps {
   isScrolled: boolean
@@ -62,9 +63,16 @@ export function Header({ isScrolled, mounted, onStartTracking }: HeaderProps) {
     >
       <div className="container flex h-16 items-center justify-between">
         <button onClick={scrollToTop} className="flex items-center gap-2 font-bold hover:opacity-80 transition-opacity">
-          <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground">
+          {/* <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground">
             G
-          </div>
+          </div> */}
+          <Image
+            src="/sugarapple.ico"
+            width={32}
+            height={32} // Replace with your logo path
+            alt="Grow a Garden Tracker Logo"
+            className="size-8 rounded-lg object-contain" // Keep rounded corners if desired
+          />
           <span>Grow a Garden Tracker</span>
         </button>
         <div className="hidden md:flex gap-4 items-center">

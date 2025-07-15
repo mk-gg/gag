@@ -182,7 +182,7 @@ export const useWishlist = () => {
           `🌱 Stock Alert: ${availableItems.length} item${availableItems.length > 1 ? "s" : ""} available!`,
           {
             body: `${itemList}${extraText}`,
-            icon: "/rosydelight.ico",
+            icon: "/sugarapple.ico",
             tag: `wishlist-batch-${Date.now()}`,
           },
         )

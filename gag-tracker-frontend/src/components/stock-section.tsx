@@ -9,7 +9,6 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { WishlistPanel, FloatingWishlistButton } from "./wishlist-panel"
 import { useEffect, useState } from "react"
 import { WishlistButton } from "./wishlist-button"
-import { useIsMobile } from "@/hooks/use-mobile"
 
 interface StockSectionProps {
   wishlistPanelOpen: boolean
@@ -22,7 +21,6 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
   const { checkWishlistItems } = useWishlist()
   const [showFloatingButton, setShowFloatingButton] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
-  const isMobile = useIsMobile()
 
   // Fallback to original mock data if API data is not available
   const fallbackData = {
@@ -151,7 +149,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
             title="Seeds"
             icon={<Sprout className="size-4 text-green-600 dark:text-green-400" />}
             items={currentData.seeds}
-            delay={isMobile ? 0 : 0.1}
+            delay={0.1}
             isLoading={loading}
           />
 
@@ -159,7 +157,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
             title="Gears"
             icon={<Wrench className="size-4 text-gray-600 dark:text-gray-400" />}
             items={currentData.gears}
-            delay={isMobile ? 0 : 0.2}
+            delay={0.2}
             isLoading={loading}
           />
 
@@ -167,7 +165,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
             title="Eggs"
             icon={<Egg className="size-4 text-yellow-600 dark:text-yellow-400" />}
             items={currentData.eggs}
-            delay={isMobile ? 0 : 0.3}
+            delay={0.3}
             isLoading={loading}
           />
 
@@ -175,7 +173,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
             title="Weather"
             icon={<Cloud className="size-4 text-blue-600 dark:text-blue-400" />}
             items={[]}
-            delay={isMobile ? 0 : 0.4}
+            delay={0.4}
             isLoading={loading}
           >
             {!loading && (
@@ -193,7 +191,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
             title="Event Shop Stock"
             icon={<ShoppingBag className="size-4 text-purple-600 dark:text-purple-400" />}
             items={currentData.eventShop}
-            delay={isMobile ? 0 : 0.5}
+            delay={0.5}
             isLoading={loading}
           />
 
@@ -201,7 +199,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
             title="Cosmetics"
             icon={<Palette className="size-4 text-pink-600 dark:text-pink-400" />}
             items={[]}
-            delay={isMobile ? 0 : 0.6}
+            delay={0.6}
             isLoading={loading}
           >
             {!loading && (
@@ -231,18 +229,10 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
                           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                             <motion.span
                               key={item.count}
-                              initial={{
-                                scale: 1.2,
-                                backgroundColor: "rgba(16, 185, 129, 1)",
-                                color: "rgba(255, 255, 255, 1)",
-                              }}
-                              animate={{
-                                scale: 1,
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                                color: "rgba(var(--foreground-rgb), 1)",
-                              }}
-                              transition={{ duration: 0.5, ease: "easeOut" }}
-                              className="text-xs font-bold px-1 py-0.5 rounded"
+                              initial={{ scale: 1.2 }}
+                              animate={{ scale: 1 }}
+                              transition={{ duration: 0.3 }}
+                              className="text-xs font-bold"
                             >
                               {item.count}
                             </motion.span>
@@ -285,18 +275,10 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
                           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                             <motion.span
                               key={item.count}
-                              initial={{
-                                scale: 1.2,
-                                backgroundColor: "rgba(16, 185, 129, 1)",
-                                color: "rgba(255, 255, 255, 1)",
-                              }}
-                              animate={{
-                                scale: 1,
-                                backgroundColor: "rgba(0, 0, 0, 0)",
-                                color: "rgba(var(--foreground-rgb), 1)",
-                              }}
-                              transition={{ duration: 0.5, ease: "easeOut" }}
-                              className="text-xs font-bold px-1 py-0.5 rounded"
+                              initial={{ scale: 1.2 }}
+                              animate={{ scale: 1 }}
+                              transition={{ duration: 0.3 }}
+                              className="text-xs font-bold"
                             >
                               {item.count}
                             </motion.span>

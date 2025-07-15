@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Track real-time inventory and availability of seeds, tools, and cosmetics across all in-game shops.",
   icons: [
       {
-        url: '/rosydelight.ico',
+        url: '/sugarapple.ico',
         sizes: 'any',
         type: 'image/x-icon',
       },

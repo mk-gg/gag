@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -7,9 +8,16 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
           <div className="space-y-4">
             <div className="flex items-center gap-2 font-bold">
-              <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground">
+              {/* <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground">
                 G
-              </div>
+              </div> */}
+              <Image
+                src="/sugarapple.ico"
+                width={32}
+                height={32} // Replace with your logo path
+                alt="Grow a Garden Tracker Logo"
+                className="size-8 rounded-lg object-contain" // Keep rounded corners if desired
+              />
               <span>Grow a Garden Tracker</span>
             </div>
             <p className="text-sm text-muted-foreground">
