@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import type { ReactNode } from "react"
 import { WishlistButton } from "./wishlist-button"
+import { useMobile } from "@/hooks/use-mobile"
 
 interface StockItem {
   name: string
@@ -21,12 +22,14 @@ interface StockCardProps {
 }
 
 export function StockCard({ title, icon, items, delay = 0, children, isLoading = false }: StockCardProps) {
+  const isMobile = useMobile()
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: isMobile ? 0.3 : 0.5, delay: isMobile ? 0 : delay }}
     >
       <Card className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur">
         <CardContent className="p-4 sm:p-6">
@@ -74,38 +77,42 @@ export function StockCard({ title, icon, items, delay = 0, children, isLoading =
             ) : (
               <motion.div
                 key="items"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: isMobile ? 5 : 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, y: isMobile ? -5 : -10 }}
+                transition={{ duration: isMobile ? 0.2 : 0.3 }}
                 className="space-y-2 sm:space-y-3"
               >
-                <AnimatePresence mode="popLayout">
+                <AnimatePresence mode={isMobile ? "wait" : "popLayout"}>
                   {items.map((item, i) => (
                     <motion.div
                       key={`${item.name}-${item.count}`}
-                      layout
-                      initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                      layout={!isMobile}
+                      initial={{ opacity: 0, x: isMobile ? 0 : -20, scale: isMobile ? 1 : 0.95 }}
                       animate={{
                         opacity: 1,
                         x: 0,
                         scale: 1,
                         transition: {
-                          duration: 0.4,
-                          delay: i * 0.05,
-                          ease: [0.25, 0.46, 0.45, 0.94],
+                          duration: isMobile ? 0.2 : 0.4,
+                          delay: isMobile ? 0 : i * 0.05,
+                          ease: isMobile ? "easeOut" : [0.25, 0.46, 0.45, 0.94],
                         },
                       }}
                       exit={{
                         opacity: 0,
-                        x: 20,
-                        scale: 0.95,
-                        transition: { duration: 0.2 },
+                        x: isMobile ? 0 : 20,
+                        scale: isMobile ? 1 : 0.95,
+                        transition: { duration: isMobile ? 0.1 : 0.2 },
                       }}
-                      whileHover={{
-                        scale: 1.02,
-                        transition: { duration: 0.2 },
-                      }}
+                      whileHover={
+                        isMobile
+                          ? {}
+                          : {
+                              scale: 1.02,
+                              transition: { duration: 0.2 },
+                            }
+                      }
                       className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -119,10 +126,26 @@ export function StockCard({ title, icon, items, delay = 0, children, isLoading =
                       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                         <motion.span
                           key={item.count}
-                          initial={{ scale: 1.2 }}
-                          animate={{ scale: 1 }}
-                          transition={{ duration: 0.3 }}
-                          className="text-xs sm:text-sm font-bold"
+                          initial={
+                            isMobile
+                              ? { scale: 1 }
+                              : {
+                                  scale: 1.2,
+                                  backgroundColor: "rgba(16, 185, 129, 1)",
+                                  color: "rgba(255, 255, 255, 1)",
+                                }
+                          }
+                          animate={
+                            isMobile
+                              ? { scale: 1 }
+                              : {
+                                  scale: 1,
+                                  backgroundColor: "rgba(0, 0, 0, 0)",
+                                  color: "rgba(var(--foreground-rgb), 1)",
+                                }
+                          }
+                          transition={{ duration: isMobile ? 0 : 0.5, ease: "easeOut" }}
+                          className="text-xs sm:text-sm font-bold px-1.5 py-0.5 rounded"
                         >
                           {item.count}
                         </motion.span>
