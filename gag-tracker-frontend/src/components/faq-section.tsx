@@ -13,27 +13,22 @@ const faqData = [
   {
     question: "Is this website affiliated with the official Grow a Garden game?",
     answer:
-      "No, Grow a Garden Tracker is a fan-made tool created by players, for players. We are not officially affiliated with Grow a Garden nor the Garden Game developers,",
-  },
-  {
-    question: "Is there a limit to how many users I can add?",
-    answer:
-      "The number of users depends on your plan. The Starter plan allows up to 5 team members, the Professional plan allows up to 20, and the Enterprise plan has no limit on team members.",
-  },
-  {
-    question: "Do you offer discounts for nonprofits or educational institutions?",
-    answer:
-      "Yes, we offer special pricing for nonprofits, educational institutions, and open-source projects. Please contact our sales team for more information.",
-  },
-  {
-    question: "How secure is my data?",
-    answer:
-      "We take security very seriously. All data is encrypted both in transit and at rest. We use industry-standard security practices and regularly undergo security audits. Our platform is compliant with GDPR, CCPA, and other relevant regulations.",
+      "No, Grow a Garden Tracker is a fan-made tool created by players, for players. We are not officially affiliated with Grow a Garden.",
   },
   {
     question: "Is it free to use?",
     answer:
-      "Yes, this tracker is completely free to use!",
+      "Yes, this web app is completely free to use!",
+  },
+  {
+    question: "Is the data always 100% accurate?",
+    answer:
+      "While I do my best to ensure accuracy, the nature of in-game shops and potential server-specific variations means the data may occasionally be slightly outdated or differ from what you see on your specific game server at any given moment especially during updates, when discrepancies can occur.",
+  },
+  {
+    question: "How can I report an issue or suggest a feature?",
+    answer:
+      "Feedback is appreciated! Please contact me on my discord account (.hyuun) to report bugs, suggest new features, or share your ideas.",
   },
 ]
 
