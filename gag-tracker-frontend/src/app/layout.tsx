@@ -7,7 +7,7 @@ import { ThemeProvider } from "../components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "GaG Tracker - Shop Tracker",
+  title: "Grow a Garden Tracker - Shop Tracker",
   description: "Track real-time inventory and availability of seeds, tools, and cosmetics across all in-game shops.",
   icons: [
       {
