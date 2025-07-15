@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/mk-gg/gag">
-    <img src="https://github.com/mk-gg/gag/blob/main/images/preview.png" alt="Master">
+    <img src="https://github.com/mk-gg/gag/blob/main/images/preview.png" alt="Master" style="width:50%; height:auto;">
   </a>
 </p>
 
