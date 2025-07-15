@@ -76,7 +76,6 @@ pnpm dev
 The backend is built with:
 - .NET 8.0
 - ASP.NET Core Web API
-- Entity Framework Core (if applicable)
 
 To start the backend server:
 ```bash
