@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import type { ReactNode } from "react"
 import { WishlistButton } from "./wishlist-button"
-import { useMobile } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface StockItem {
   name: string
@@ -22,7 +22,7 @@ interface StockCardProps {
 }
 
 export function StockCard({ title, icon, items, delay = 0, children, isLoading = false }: StockCardProps) {
-  const isMobile = useMobile()
+  const isMobile = useIsMobile()
 
   return (
     <motion.div

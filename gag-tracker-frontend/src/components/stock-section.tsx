@@ -9,7 +9,7 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { WishlistPanel, FloatingWishlistButton } from "./wishlist-panel"
 import { useEffect, useState } from "react"
 import { WishlistButton } from "./wishlist-button"
-import { useMobile } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface StockSectionProps {
   wishlistPanelOpen: boolean
@@ -22,7 +22,7 @@ export function StockSection({ wishlistPanelOpen, onWishlistPanelClose, wishlist
   const { checkWishlistItems } = useWishlist()
   const [showFloatingButton, setShowFloatingButton] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
-  const isMobile = useMobile()
+  const isMobile = useIsMobile()
 
   // Fallback to original mock data if API data is not available
   const fallbackData = {
