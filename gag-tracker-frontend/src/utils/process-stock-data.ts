@@ -63,8 +63,8 @@ const getItemColor = (name: string, category: string): string => {
     "Summer Seed Pack": "bg-green-500",
 
     // Cosmetics
-    "Beach Crate": "bg-blue-400",
-    "Sign Crate": "bg-orange-400",
+    "Beach Crate": "bg-yellow-500",
+    "Sign Crate": "bg-blue-500",
     "Green Tractor": "bg-green-500",
     "Torch": "bg-orange-500",
     "Yellow Umbrella": "bg-yellow-500",

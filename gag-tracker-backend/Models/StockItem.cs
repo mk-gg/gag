@@ -9,15 +9,19 @@ namespace gag_tracker_backend.Models
 
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
-
+        public string Name { get; set; } = string.Empty;
 
         public int Quantity { get; set; }
 
         [MaxLength(100)]
-        public String Category { get; set; }
+        public string Category { get; set; } = string.Empty;
+
+        [MaxLength(10)]
+        public string Emoji { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string Countdown { get; set; } = string.Empty;
 
         public DateTime LastUpdated { get; set; }
-
     }
 }

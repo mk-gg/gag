@@ -1,6 +1,6 @@
 ﻿using gag_tracker_backend.Models;
-using HtmlAgilityPack;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace gag_tracker_backend.Controllers
 {
@@ -23,51 +23,25 @@ namespace gag_tracker_backend.Controllers
             try
             {
                 var httpClient = _httpClientFactory.CreateClient();
-                var response = await httpClient.GetAsync("https://growagardenvalues.com/stock/stocks.php");
+                var response = await httpClient.GetAsync("https://gagstock.gleeze.com/grow-a-garden");
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                var doc = new HtmlDocument();
-                doc.LoadHtml(content);
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse>(content);
+
+                if (apiResponse?.Status != "success" || apiResponse.Data == null)
+                {
+                    return StatusCode(500, "Invalid response from API");
+                }
 
                 var stockItems = new List<StockItem>();
-                var sections = doc.DocumentNode.SelectNodes("//section[@class='stock-section']");
-                
-                if (sections != null)
-                {
-                    foreach (var section in sections)
-                    {
-                        var categoryNode = section.SelectSingleNode(".//h2");
-                        var category = categoryNode?.InnerText.Trim() ?? "Uncategorized";
 
-                        var items = section.SelectNodes(".//div[@class='stock-item']");
-                        if (items != null)
-                        {
-                            foreach (var item in items)
-                            {
-                                var nameNode = item.SelectSingleNode(".//div[@class='item-name']");
-                                var quantityNode = item.SelectSingleNode(".//div[@class='item-quantity']");
-
-                                if (nameNode != null && quantityNode != null)
-                                {
-                                    var name = nameNode.InnerText.Trim();
-                                    var quantityText = quantityNode.InnerText.Trim().Replace("x", "");
-
-                                    if (int.TryParse(quantityText, out int quantity))
-                                    {
-                                        stockItems.Add(new StockItem
-                                        {
-                                            Name = name,
-                                            Quantity = quantity,
-                                            Category = category,
-                                            LastUpdated = DateTime.UtcNow
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                // Process each category
+                ProcessCategory(stockItems, apiResponse.Data.Egg, "Egg");
+                ProcessCategory(stockItems, apiResponse.Data.Seed, "Seed");
+                ProcessCategory(stockItems, apiResponse.Data.Gear, "Gear");
+                ProcessCategory(stockItems, apiResponse.Data.Cosmetics, "Cosmetics");
+                ProcessCategory(stockItems, apiResponse.Data.Honey, "Honey");
 
                 return Ok(stockItems);
             }
@@ -75,6 +49,22 @@ namespace gag_tracker_backend.Controllers
             {
                 _logger.LogError(ex, "Error getting current stock");
                 return StatusCode(500, "An error occurred while fetching stock data");
+            }
+        }
+
+        private void ProcessCategory(List<StockItem> stockItems, StockCategory category, string categoryName)
+        {
+            foreach (var item in category.Items)
+            {
+                stockItems.Add(new StockItem
+                {
+                    Name = item.Name,
+                    Quantity = item.Quantity,
+                    Category = categoryName,
+                    Emoji = item.Emoji,
+                    Countdown = category.Countdown,
+                    LastUpdated = DateTime.UtcNow
+                });
             }
         }
 
@@ -95,6 +85,8 @@ namespace gag_tracker_backend.Controllers
                             Name = group.Key.Name,
                             Category = group.Key.Category,
                             Quantity = group.Sum(item => item.Quantity),
+                            Emoji = group.First().Emoji,
+                            Countdown = group.First().Countdown,
                             LastUpdated = DateTime.UtcNow
                         })
                         .ToList();
