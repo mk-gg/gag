@@ -37,11 +37,11 @@ namespace gag_tracker_backend.Controllers
                 var stockItems = new List<StockItem>();
 
                 // Process each category
-                ProcessCategory(stockItems, apiResponse.Data.Egg, "Egg");
-                ProcessCategory(stockItems, apiResponse.Data.Seed, "Seed");
-                ProcessCategory(stockItems, apiResponse.Data.Gear, "Gear");
+                ProcessCategory(stockItems, apiResponse.Data.Egg, "Eggs");
+                ProcessCategory(stockItems, apiResponse.Data.Seed, "Seeds");
+                ProcessCategory(stockItems, apiResponse.Data.Gear, "Gears");
                 ProcessCategory(stockItems, apiResponse.Data.Cosmetics, "Cosmetics");
-                ProcessCategory(stockItems, apiResponse.Data.Honey, "Honey");
+                ProcessCategory(stockItems, apiResponse.Data.Honey, "Event Shop Stock");
 
                 return Ok(stockItems);
             }
