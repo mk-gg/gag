@@ -23,25 +23,28 @@ namespace gag_tracker_backend.Controllers
             try
             {
                 var httpClient = _httpClientFactory.CreateClient();
-                var response = await httpClient.GetAsync("https://gagstock.gleeze.com/grow-a-garden");
+                var response = await httpClient.GetAsync("https://gagapi.onrender.com/alldata");
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse>(content);
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-                if (apiResponse?.Status != "success" || apiResponse.Data == null)
+                if (apiResponse == null)
                 {
                     return StatusCode(500, "Invalid response from API");
                 }
 
                 var stockItems = new List<StockItem>();
 
-                // Process each category
-                ProcessCategory(stockItems, apiResponse.Data.Egg, "Eggs");
-                ProcessCategory(stockItems, apiResponse.Data.Seed, "Seeds");
-                ProcessCategory(stockItems, apiResponse.Data.Gear, "Gears");
-                ProcessCategory(stockItems, apiResponse.Data.Cosmetics, "Cosmetics");
-                ProcessCategory(stockItems, apiResponse.Data.Honey, "Event Shop Stock");
+                // Process only the required categories: seeds, eggs, gears, events, and cosmetics
+                ProcessCategoryItems(stockItems, apiResponse.Seeds, "Seeds");
+                ProcessCategoryItems(stockItems, apiResponse.Eggs, "Eggs");
+                ProcessCategoryItems(stockItems, apiResponse.Gear, "Gears");
+                ProcessCategoryItems(stockItems, apiResponse.Events, "Events");
+                ProcessCategoryItems(stockItems, apiResponse.Cosmetics, "Cosmetics");
 
                 return Ok(stockItems);
             }
@@ -52,18 +55,18 @@ namespace gag_tracker_backend.Controllers
             }
         }
 
-        private void ProcessCategory(List<StockItem> stockItems, StockCategory category, string categoryName)
+        private void ProcessCategoryItems(List<StockItem> stockItems, List<ApiStockItem> items, string categoryName)
         {
-            foreach (var item in category.Items)
+            foreach (var item in items)
             {
                 stockItems.Add(new StockItem
                 {
                     Name = item.Name,
                     Quantity = item.Quantity,
                     Category = categoryName,
-                    Emoji = item.Emoji,
-                    Countdown = category.Countdown,
-                    LastUpdated = DateTime.UtcNow
+                    Emoji = item.Emoji ?? string.Empty,
+                    Countdown = string.Empty, // No countdown in new API structure
+                    LastUpdated = item.LastUpdated ?? DateTime.UtcNow
                 });
             }
         }
